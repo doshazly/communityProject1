@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ask Question</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-image: url("bg.jpg"); /* اسم صورة الخلفية */
+      background-size: cover;
+      background-position: center;
+      font-family: Arial, sans-serif;
+    }
+
+    .back-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 30px;
+      text-decoration: none;
+      background-color: #ffffffbb;
+      color: #0d47a1;
+      padding: 5px 15px;
+      border-radius: 50%;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      transition: background-color 0.3s;
+    }
+
+    .back-button:hover {
+      background-color: #0d47a1;
+      color: white;
+    }
+
+    .form-container {
+      background-color: rgba(255, 255, 255, 0.9);
+      width: 350px;
+      margin: 120px auto;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
+    h2 {
+      color: #0d47a1;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"],
+    input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .buttons button {
+      width: 45%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .cancel {
+      background-color: #ccc;
+      color: black;
+    }
+
+    .post {
+      background-color: #0d47a1;
+      color: white;
+    }
+
+    .post:hover {
+      background-color: #08306b;
+    }
+
+    .cancel:hover {
+      background-color: #999;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- زر الرجوع للصفحة الأولى -->
+  <a href="index.html" class="back-button">+</a>
+
+  <div class="form-container">
+    <h2>Ask Question</h2>
+    <form id="questionForm">
+  <input type="text" id="question" placeholder="Add question" required>
+  <input type="text" id="description" placeholder="Add description" required>
+  <input type="file" id="image">
+  <div class="buttons">
+    <button class="cancel" type="reset">Cancel</button>
+    <button class="post" type="submit">Post</button>
+  </div>
+</form>
+
+  </div>
+
+    <script>
+  // حذف بيانات المجتمع عند فتح الصفحة
+  localStorage.removeItem('communityPosts');
+
+  const form = document.getElementById('questionForm');
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const question = document.getElementById('question').value;
+    const description = document.getElementById('description').value;
+    const imageInput = document.getElementById('image');
+    const file = imageInput.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const postData = {
+          question,
+          description,
+          image: event.target.result, // صورة بصيغة Base64
+          createdAt: new Date().toISOString()
+        };
+
+        const existingPosts = JSON.parse(localStorage.getItem('communityPosts')) || [];
+        existingPosts.push(postData);
+        localStorage.setItem('communityPosts', JSON.stringify(existingPosts));
+        window.location.href = "index.html";
+      };
+      reader.readAsDataURL(file);
+    } else {
+      const postData = {
+        question,
+        description,
+        image: null,
+        createdAt: new Date().toISOString()
+      };
+
+      const existingPosts = JSON.parse(localStorage.getItem('communityPosts')) || [];
+      existingPosts.push(postData);
+      localStorage.setItem('communityPosts', JSON.stringify(existingPosts));
+      window.location.href = "index.html";
+    }
+  });
+</script>
+</body>
+</html>
